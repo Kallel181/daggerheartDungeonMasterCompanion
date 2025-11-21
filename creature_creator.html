@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Monster Maker — Daggerheart GM Companion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body { display: flex; flex-direction: column; }
+
+  .maker-wrapper {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .left-panel {
+    width: 45%;
+    background: var(--df-color-bg-inner);
+    padding: 20px;
+    border-radius: var(--df-corner);
+    border: 3px solid var(--df-color-border);
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+  }
+
+  .left-panel fieldset {
+    border: 2px solid var(--df-color-border);
+    border-radius: var(--df-corner);
+    margin-bottom: 20px;
+    padding: 10px 15px;
+  }
+
+
+  .left-panel input,
+  .left-panel select,
+  .left-panel textarea {
+    width: 90%;
+    padding: 8px 10px;
+    border-radius: var(--df-corner);
+    border: 2px solid var(--df-color-border);
+    background: #ffffff;
+    font-family: var(--df-font);
+    margin: 4px 0 10px;
+    font-size: 1rem;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .left-panel input:focus,
+  .left-panel select:focus,
+  .left-panel textarea:focus {
+    border-color: var(--df-color-Incredible);
+    box-shadow: 0 0 0 2px rgba(107, 0, 156, .3);
+    outline: none;
+  }
+
+  textarea { min-height: 90px; resize: vertical; }
+
+  button {
+    cursor: pointer;
+  }
+
+  #btn-generate, #add-exp, #add-feat {
+    background: var(--df-color-Incredible);
+    border: none;
+    padding: 8px 12px;
+    border-radius: var(--df-corner);
+    color: #fff;
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  #btn-generate:hover, #add-exp:hover, #add-feat:hover {
+    opacity: .85;
+  }
+
+  .remove-btn {
+    background: #af3b3b;
+    color: #fff;
+    border: none;
+    padding: 3px 7px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .right-panel {
+    width: 55%;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+  }
+
+  .preview-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .preview-buttons button {
+    padding: 10px 15px;
+    background: var(--df-color-bg-inner);
+    border: 2px solid var(--df-color-border);
+    border-radius: var(--df-corner);
+    cursor: pointer;
+    font-weight: 600;
+  }
+</style>
+
+<style>
+  /* partialy boroed from the Daggerforge plugin */
+  /* CARD CONTAINER */
+.df-card-outer {
+  background: #1b1b1b;
+  border: 2px solid #3b3b3b;
+  padding: 12px;
+  border-radius: 10px;
+  display: inline-block;
+  max-width: 430px;
+  color: #e5e5e5;
+  font-family: "Georgia", serif;
+}
+.df-card-inner {
+  background: #111;
+  border: 2px solid #3b3b3b;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+}
+
+/* EDIT BUTTON (little pencil) */
+.df-adv-edit-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 4px 6px;
+  font-size: 16px;
+  color: #ccc;
+}
+
+/* TITLES */
+.df-card-inner h2 {
+  margin: 10px 0 4px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+}
+.df-subtitle {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #bfa76f;
+  font-style: italic;
+}
+
+/* DESCRIPTION */
+.df-desc {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 14px;
+  color: #ddd;
+}
+
+/* MOTIVES */
+.df-motives {
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: bold;
+}
+.df-motives-desc {
+  font-weight: normal;
+  color: #ccc;
+}
+
+/* STATS */
+.df-stats {
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+.df-stat {
+  font-weight: bold;
+  color: #bfa76f;
+}
+.df-experience-line {
+  margin-top: 5px;
+}
+
+/* SECTION TITLE */
+.df-section {
+  margin: 14px 0 10px;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #3b3b3b;
+  padding-bottom: 4px;
+  color: #fff;
+}
+
+/* FEATURES */
+.df-feature {
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+.df-feature-title {
+  display: block;
+  font-weight: bold;
+  color: #bfa76f;
+  margin-bottom: 2px;
+}
+.df-feature-desc {
+  color: #d8d8d8;
+  line-height: 1.35;
+}
+
+/* HP & STRESS tickboxes */
+.df-hp-tickboxes,
+.df-stress-tickboxes {
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.df-hp-stress {
+  font-weight: bold;
+  color: #bfa76f;
+}
+.df-hp-tickbox,
+.df-stress-tickbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #bfa76f;
+  cursor: pointer;
+}
+.df-adversary-count {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+}
+
+</style>
+
+</head>
+<body>
+
+  <!-- TOP MENU -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="creature_creator.html">Creature Creator</a>
+    <a class="soon">More Soon if i feel like doing it</a>
+    <a class="soon">More Soon if i feel like doing it</a>
+    <a class="soon">More Soon if i feel like doing it</a>
+  </nav>
+
+  <!-- PAGE BODY -->
+  <div class="maker-wrapper">
+
+    <!-- LEFT FORM -->
+    <div class="left-panel">
+      <h2>Monster Maker</h2>
+      The copy code feature is made to be used with the Daggerforge plugin on obsidian, I highly recommend you check it out.
+
+      <fieldset>
+        <legend>Base Info</legend>
+        <label>Name: <input id="name" type="text" placeholder="Creature Name"></label><br><br>
+
+        <label>Tier:
+          <select id="tier">
+            <option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+          </select>
+        </label><br><br>
+
+        <label>Type:
+          <select id="type">
+            <option>Minion</option><option>Support</option>
+            <option>Social</option><option>Horde</option>
+            <option>Ranged</option><option>Skulk</option>
+            <option>Standard</option><option>Leader</option>
+            <option>Bruiser</option><option>Solo</option>
+          </select>
+        </label>
+
+        <button id="btn-generate" style="float:right;">Generate average values</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Stats</legend>
+
+        Difficulty <input id="difficulty" type="number"><br>
+
+        Thresholds
+        <input id="threshold1" type="number" style="width:70px;"> /
+        <input id="threshold2" type="number" style="width:70px;"><br>
+
+        HP <input id="hp" type="number"><br>
+
+        Stress <input id="stress" type="number"><br>
+        
+        Weapon Name <input id="weapon-name" type="text" placeholder="Attack"><br>
+        Range <input id="weapon-range" type="text" style="width:120px;" placeholder="Close">
+        Damage Type <input id="weapon-damage-type" type="text"style="width:120px;" placeholder="Physical"><br>
+        
+        ATK <input id="atk" type="text" style="width:70px;" placeholder="+1"> |
+
+        Dice <input id="dice-count" type="number" style="width:70px;">
+        <select id="dice-type" style="width: 80px;">
+          <option> </option><option>d4</option><option>d6</option><option>d8</option>
+          <option>d12</option><option>d20</option>
+        </select>
+        + <input id="dice-bonus" type="number" style="width:70px;"><br><br>
+          
+        <!-- Experiences -->
+        <fieldset id="exp-wrapper">
+          <legend>Experiences</legend>
+          <button id="add-exp">+ Add Experience</button>
+      </fieldset>
+
+      <!-- Features -->
+      <fieldset id="feat-wrapper">
+        <legend>Features</legend>
+        <button id="add-feat">+ Add Feature</button>
+      </fieldset>
+    </div>
+
+    <!-- RIGHT PREVIEW -->
+    <div class="right-panel">
+      <div class="preview-buttons">
+        <button id="copy-code">Copy Code</button>
+        <button id="export-png">Export PNG</button>
+      </div>
+
+      <div id="render-area">
+      </div>
+    </div>
+  </div>
+
+<!-- SCRIPT -->
+<script>
+updateRender();
+/* ========= Average Values ========= */
+const AVERAGE_VALUES = {
+  // tier: { type: { stats ... } }
+  1: {
+    Minion: {difficulty: 9, t1: 0, t2: 0, hp: 1, stress: 1, atk: -2, diceCount: 1, diceType: "d4", bonus: 0},
+    Support: {difficulty: 13, t1: 5, t2: 9, hp: 5, stress: 3, atk: +1, diceCount: 1, diceType: "d8", bonus: 1},
+    Social: {difficulty: 14, t1: 6, t2: 10, hp: 3, stress: 5, atk: -2, diceCount: 1, diceType: "d6", bonus: 1},
+    Horde: {difficulty: 12, t1: 5, t2: 11, hp: 4, stress: 3, atk: 1, diceCount: 1, diceType: "d8", bonus: 1},
+    Ranged: {difficulty: 13, t1: 4, t2: 7, hp: 3, stress: 2, atk: 0, diceCount: 1, diceType: "d10", bonus: 2},
+    Skulk: {difficulty: 12, t1: 4, t2: 8, hp: 3, stress: 3, atk: 0, diceCount: 1, diceType: "d4", bonus: 4},
+    Standard: {difficulty: 13, t1: 6, t2: 10, hp: 4, stress: 3, atk: +1, diceCount: 1, diceType: "d6", bonus: 1},
+    Leader: {difficulty: 15, t1: 7, t2: 13, hp: 7, stress: 3, atk: +3, diceCount: 1, diceType: "d10", bonus: 3},
+    Bruiser: {difficulty: 12, t1: 8, t2: 15, hp: 7, stress: 2, atk: +1, diceCount: 1, diceType: "d8", bonus: 3},
+    Solo: {difficulty: 13, t1: 8, t2: 15, hp: 8, stress: 3, atk: +3, diceCount: 1, diceType: "d12", bonus: 2},
+  },
+  
+};
+
+
+document.getElementById("add-exp").onclick = () => {
+  const w = document.getElementById("exp-wrapper");
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input class="exp-name" placeholder="Experience name">
+    <input class="exp-bonus" type="number" placeholder="+1">
+    <button class="remove-btn">x</button>
+  `;
+  div.querySelector(".remove-btn").onclick = () => div.remove();
+  w.appendChild(div);
+  updateRender();
+};
+
+
+document.getElementById("add-feat").onclick = () => {
+  const w = document.getElementById("feat-wrapper");
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input class="feat-name" placeholder="Feature name" style="width:50%">
+    <select class="feat-cost">
+      <option>Action</option><option>Passive</option><option>Reaction</option>
+    </select>
+    <button class="remove-btn">x</button>
+    <textarea class="feat-desc" placeholder="Feature description"></textarea>
+  `;
+  div.querySelector(".remove-btn").onclick = () => div.remove();
+  w.appendChild(div);
+  updateRender();
+};
+
+
+document.getElementById("btn-generate").onclick = () => {
+  const tier = document.getElementById("tier").value;
+  const type = document.getElementById("type").value;
+  const v = AVERAGE_VALUES[tier]?.[type];
+  if (!v) return alert("Values for this tier/type not configured yet.");
+  document.getElementById("difficulty").value = v.difficulty;
+  document.getElementById("threshold1").value = v.t1;
+  document.getElementById("threshold2").value = v.t2;
+  document.getElementById("hp").value = v.hp;
+  document.getElementById("stress").value = v.stress;
+  document.getElementById("atk").value = v.atk;
+  document.getElementById("dice-count").value = v.diceCount;
+  document.getElementById("dice-type").value = v.diceType;
+  document.getElementById("dice-bonus").value = v.bonus;
+  updateRender();
+};
+
+/* ========= Atualiza automaticamente a renderização ========= */
+document.querySelectorAll("input, select, textarea").forEach(el => {
+  el.addEventListener("input", updateRender);
+});
+
+document.addEventListener('keydown', (event) => {
+  updateRender();
+});
+
+document.addEventListener('click', function(event) {
+  updateRender();
+});
+
+function updateRender() {
+  const name = document.getElementById("name").value || "Creature Name";
+  const tier = document.getElementById("tier").value;
+  const type = document.getElementById("type").value;
+
+  const difficulty = document.getElementById("difficulty").value || 0;
+  const t1 = document.getElementById("threshold1").value || 0;
+  const t2 = document.getElementById("threshold2").value || 0;
+  const hp = document.getElementById("hp").value || 0;
+  const stress = document.getElementById("stress").value || 0;
+  const atk = document.getElementById("atk").value || 0;
+  const diceCount = document.getElementById("dice-count").value || 1;
+  const diceType = document.getElementById("dice-type").value || " ";
+  const diceBonus = document.getElementById("dice-bonus").value || 0;
+
+  const weapon_name = document.getElementById("weapon-name").value || "Attack"
+  const weapon_range = document.getElementById("weapon-range").value || "Close"
+  const weapon_damage_type = document.getElementById("weapon-damage-type").value || "Physical"
+
+  const exp = [...document.querySelectorAll("#exp-wrapper > div")]
+    .map(d => {
+      const n = d.querySelector(".exp-name").value;
+      const b = d.querySelector(".exp-bonus").value;
+      return n ? `${n} +${b}` : "";
+    })
+    .filter(v => v)
+    .join(", ");
+
+  const feats = [...document.querySelectorAll("#feat-wrapper > div")]
+    .map(d => `
+      <div class="df-feature">
+        <span class="df-feature-title">${d.querySelector(".feat-name").value} — ${d.querySelector(".feat-cost").value}:</span>
+        <span class="df-feature-desc">${d.querySelector(".feat-desc").value}</span>
+      </div>
+    `)
+    .join("");
+
+  const html = `
+<section id="custom" class="df-card-outer df-pseudo-cut-corners outer" data-type="${type}">
+  <div class="df-card-inner df-pseudo-cut-corners inner">
+    <h2>${name}</h2>
+    <div class="df-subtitle">Tier ${tier} ${type}</div>
+    <div class="df-stats">
+      Difficulty: <span class="df-stat">${difficulty} |</span>
+      Thresholds: <span class="df-stat">${t1}/${t2} |</span>
+      HP: <span class="df-stat">${hp} |</span>
+      Stress: <span class="df-stat">${stress}</span>
+      <br>ATK: <span class="df-stat">${atk} |</span>
+      <span class="df-stat">${weapon_name}: ${weapon_range} | ${diceCount}${diceType} +${diceBonus} ${weapon_damage_type}</span><br>
+      <div class="df-experience-line">Experience: <span class="df-stat">${exp}</span></div>
+    </div>
+    <div class="df-section">FEATURES</div>
+    ${feats}
+  </div>
+</section>
+  `;
+
+  document.getElementById("render-area").innerHTML = html;
+}
+
+
+/* ========= COPIAR PARA A ÁREA DE TRANSFERÊNCIA ========= */
+document.getElementById("copy-code").onclick = () => {
+  const code = document.getElementById("render-area").innerHTML;
+  navigator.clipboard.writeText(code);
+  alert("Code copied to clipboard!");
+};
+
+/* ===== EXPORT PNG (função ficará com você) ===== */
+document.getElementById("export-png").onclick = () => {
+  console.log("export PNG called");
+};
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.getElementById("export-png").addEventListener("click", function () {
+  const element = document.getElementById("custom");
+
+  html2canvas(element).then(canvas => {
+    const image = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.download = "export.png";
+    link.href = image;
+    link.click();
+  });
+});
+</script>
+
+</body>
+</html>

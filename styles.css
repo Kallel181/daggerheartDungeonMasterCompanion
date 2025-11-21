@@ -1,0 +1,97 @@
+:root {/* partialy boroed from the Daggerforge plugin */
+  --df-corner: 10px;
+  --df-font: "Overpass", sans-serif;
+  --df-color-primary: #000;
+  --df-color-bg-outer: #bfa980;
+  --df-color-bg-inner: #f5f0e9;
+  --df-color-border: #bfa980;
+  --df-color-Incredible: #6b009c;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--df-color-bg-outer);
+  font-family: var(--df-font);
+  color: var(--df-color-primary);
+  overflow-x: hidden;
+}
+
+/* Navbar */
+nav {
+  background: var(--df-color-bg-inner);
+  border-bottom: 3px solid var(--df-color-border);
+  padding: 12px 24px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-weight: 600;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--df-color-primary);
+  transition: opacity .2s;
+}
+
+nav a:hover {
+  opacity: .7;
+}
+
+.soon {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+/* Main content */
+.container {
+  display: flex;
+  margin-top: 80px;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+  padding: 0 20px;
+  animation: fade 1.3s ease;
+}
+
+.logo-box img {
+  max-width: 260px;
+  border-radius: var(--df-corner);
+  animation: fade 2s ease;
+}
+
+.text-box {
+  max-width: 520px;
+  background: var(--df-color-bg-inner);
+  padding: 35px;
+  border-radius: var(--df-corner);
+  border: 3px solid var(--df-color-border);
+  animation: fade 1.6s ease;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+p {
+  font-size: 1.15rem;
+  line-height: 1.6rem;
+}
+
+/* Fade */
+@keyframes fade {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+
+@media (max-width: 800px) {
+  .container {
+    flex-direction: column;
+    text-align: center;
+  }
+}
